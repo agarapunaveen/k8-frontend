@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+ name: frontend
+ namespace: expense
+spec:
+ type: LoadBalancer
+ selector:
+    component: frontend
+    project: expense
+    tier: web
+ ports:
+  - protocol: TCP
+    port: 80
+    targetPort: {{ .Values.configmap.port }}

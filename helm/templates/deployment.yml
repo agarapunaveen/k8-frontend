@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: expense
+  # these lables belongs to replicaset resources
+  labels:
+    component: frontend
+    project: expense
+    tier: web
+    # how many replicas required
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  # which pod you want replica
+  selector:
+    matchLabels:
+      component: frontend
+      project: expense
+      tier: web
+# pod definition
+  template:
+    metadata:
+    # selector labels must match below labels
+      labels:
+        component: frontend
+        project: expense
+        tier: web
+    spec:
+      containers:
+       - name: frontend
+         image: 211125718262.dkr.ecr.us-east-1.amazonaws.com/expense-frontend:{{ .Values.deployment.imageVersion }}
+         volumeMounts:
+          - name: nginx-conf
+            mountPath: /etc/nginx/nginx.conf
+            subPath: nginx.conf
+            readOnly: true
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: frontend
+          items:
+          - key: nginx.conf
+            path: nginx.conf  
